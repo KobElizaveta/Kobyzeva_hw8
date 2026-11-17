@@ -10,7 +10,9 @@ namespace Kobyzeva_hw8_Latypova.Class
         
         public Worker(string name)
         {
+            Guid Id = Guid.NewGuid();
             Name = name;
+            Tasks = new List<Task>();
         }
 
         public (SolutionWorker, Worker?) DecisionAcceptTask(Task task, List<Worker> workers)
@@ -18,11 +20,12 @@ namespace Kobyzeva_hw8_Latypova.Class
             Console.Write("Решение о задачe (Accept, Delegate, Reject)");
             Console.WriteLine($"{task.Description} сроки: {task.Deadline}");
             SolutionWorker.TryParse(Console.ReadLine(), out SolutionWorker solution);
-            if(solution is SolutionWorker.Accept)
+            if(solution == SolutionWorker.Accept)
             {
+                Tasks.Add(task);
                 return (SolutionWorker.Accept, null);
             }
-            else if(solution is SolutionWorker.Delegate)
+            else if(solution == SolutionWorker.Delegate)
             {
                 Console.Write("Введите id сотрудника, которому передадите задачу:  ");
                 Guid.TryParse(Console.ReadLine(), out Guid idWhomDelegate);

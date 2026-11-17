@@ -13,37 +13,42 @@ namespace Kobyzeva_hw8_Latypova.Class
             Name = name;
         }
 
-        public void AssignmentTask(Project project)
+        public Task AssignmentTask(Project project)
         {
-            Console.WriteLine("Создание задач");
-            bool isContinue = true;
-            while(isContinue)
+            Console.WriteLine("Создание задачи");
+            Console.Write("Описание:  ");
+            string description = Console.ReadLine();
+            Console.Write("Срок выполнения (формат 15/06/2024):  ");
+            bool isParseDeadLine = DateTime.TryParse(Console.ReadLine(), out DateTime deadLine);
+            Task newTask = null;
+            if (isParseDeadLine && description is not null && deadLine <= project.DeadLine && deadLine > DateTime.Now)
             {
-                Console.Write("Описание:  ");
-                string description = Console.ReadLine();
-                Console.Write("Срок выполнения (формат 15/06/2024):  ");
-                bool isParseDeadLine = DateTime.TryParse(Console.ReadLine(), out DateTime deadLine);
-                if(isParseDeadLine && description is not null)
-                {
-                    Task newTask = new Task(project, description, deadLine);
-                    project.Tasks.Add(newTask);
-                }
-                else
-                {
-                    Console.WriteLine("Неверный ввод данных. Задача не добавлена");
-                }
-
-                Console.Write("Хотите продолжить? (д/н)");
-                string answerIsContinue = Console.ReadLine();
-                if(answerIsContinue == "н") { isContinue = false; }
+                newTask = new Task(project, description, deadLine);
+                project.Tasks.Add(newTask);
+                Console.WriteLine("Задача создана и добавлена");
+                return newTask;
             }
-
+            else
+            {
+                Console.WriteLine("Неверный ввод данных. Задача не добавлена");
+                return null;
+            }      
         }
 
-        public void RemoveTask(Project project, Task task)
+        public void RemoveTask(Project project, params List<Task> tasksToRemove)
         {
-            project.Tasks.Remove(task);
-            Console.WriteLine($"Задача {task} удалена");
+            Console.WriteLine("Удаление задачи");
+            if(tasksToRemove.Count == 0)
+            {
+                tasksToRemove.Add(project.FindTask());
+                if(tasksToRemove.Count == 0) { Console.WriteLine("Задача не найдена. Удаление не произошло"); }
+            }
+
+            foreach(Task task in tasksToRemove)
+            {
+                project.Tasks.Remove(task);
+                Console.WriteLine($"Задача {task.Description} удалена");
+            }
         }
     }
 }

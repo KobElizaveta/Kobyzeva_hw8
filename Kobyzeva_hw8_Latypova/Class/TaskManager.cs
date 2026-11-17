@@ -23,23 +23,23 @@ namespace Kobyzeva_hw8_Latypova.Class
             Workers.AddRange(new[] { pavlovaVR, vasilyevDR, kirpichnikovIE, smirnovaMS, popovaEV, sokolovMA, lebedevaON});
         }
 
-        public bool CreateProject()
+        public Project CreateProject()
         {
             Console.WriteLine("Создание проекта");
-            Console.Write("Описание:");
+            Console.Write("Описание:  ");
             string description = Console.ReadLine();
-            Console.Write("Срок выполнения:");
+            Console.Write("Срок выполнения:  ");
             bool isParseDate = DateTime.TryParse(Console.ReadLine(), out DateTime deadLine);
-            Console.Write("Имя клиента(фио):");
+            Console.Write("Имя клиента(фио):  ");
             string infoClient = Console.ReadLine();
-            Console.Write("Человек, ответственный за проект(фио или id):");
+            Console.Write("Человек, ответственный за проект(фио или id):  ");
             string infoTeamLead = Console.ReadLine();
             bool isParseIDTeamLead = Guid.TryParse(infoTeamLead, out Guid _);
             TeamLead teamLead = null;
-            if(!isParseDate || deadLine <= DateTime.Now || description is null || teamLead is null || infoClient is null) 
+            if(!isParseDate || deadLine <= DateTime.Now || string.IsNullOrEmpty(description) || string.IsNullOrEmpty(infoTeamLead) || string.IsNullOrEmpty(infoClient)) 
             { 
                 Console.WriteLine("Неверно введены данные. Проект не создан");
-                return false;
+                return null;
             }
             else if(isParseIDTeamLead)
             {
@@ -50,26 +50,34 @@ namespace Kobyzeva_hw8_Latypova.Class
                     { 
                         teamLead = tl;
                         break;
-                    }
-                    Console.WriteLine("Тимлид не найден");
+                    } 
                 }
             }
             else if (!isParseIDTeamLead)
             {
                 foreach (TeamLead tl in TeamLeads)
                 {
-                    if (tl.Name == infoTeamLead)
+                    if (tl.Name.Trim() == infoTeamLead.Trim())
                     {
                         teamLead = tl;
                         break;
-                    }
-                    Console.WriteLine("Тимлид не найден");
+                    }   
                 }
             }
-            Client client = new Client(infoClient);
-            Project newProject = new Project(description, deadLine, client, teamLead);
-            Console.WriteLine("Проект создан");
-            return true;
+
+            if(teamLead is not null)
+            {
+                Client client = new Client(infoClient);
+                Project newProject = new Project(description, deadLine, client, teamLead);
+                Console.WriteLine("Проект создан");
+                return newProject;
+            }
+            else 
+            {
+                Console.WriteLine("Тимлид не найден");
+                Console.WriteLine("Проект не создан");
+                return CreateProject();
+            }
         }
 
         public bool AssignmentExecutor(Project project, Task task)
@@ -77,6 +85,7 @@ namespace Kobyzeva_hw8_Latypova.Class
             if (task.Status != StatusTask.Assigned)
             {
                 Console.WriteLine("Задача уже назначена");
+                return true;
             }
 
             List<Worker> history = new List<Worker>();
@@ -101,8 +110,8 @@ namespace Kobyzeva_hw8_Latypova.Class
                         }
                     }
                 }
-
-                (SolutionWorker solutionWorker, Worker? delegatedWorker) = correntWorker.DecisionAcceptTask(task, workers);
+                Console.WriteLine($"Задача предлагается {correntWorker.Name}");
+                (SolutionWorker solutionWorker, Worker? delegatedWorker) = correntWorker.DecisionAcceptTask(task, Workers);
                 if(solutionWorker is SolutionWorker.Accept) 
                 {
                     task.Executor = correntWorker;
@@ -154,6 +163,6 @@ namespace Kobyzeva_hw8_Latypova.Class
                 Console.WriteLine("Статус проекта - Закрыт");
             }
         }
-
+        
     }
 }

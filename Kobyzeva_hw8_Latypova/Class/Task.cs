@@ -17,7 +17,7 @@ namespace Kobyzeva_hw8_Latypova.Class
             Client = project.Cleint;
             Executor = null;
             Status = StatusTask.Assigned;
-            Reports = null;
+            Reports = new List<Report>();
         }
 
         public void CreateReport(Worker executor)
@@ -54,5 +54,15 @@ namespace Kobyzeva_hw8_Latypova.Class
             Status = StatusTask.InProgress;
             Console.WriteLine("Отчет НЕ утвержден. Задача отправлена на доработку");
         }
+
+        public void Print()
+        {
+            Console.WriteLine($"Описание: {Description}\nСрок сдачи: {Deadline} Заказчик: {Client.Name} Ответственный: {Executor.Name} Статус: {Status}\nОтчеты:");
+            foreach (Report report in Reports)
+            {
+                Console.WriteLine($"Текст: {report.Text} Срок сдачи: {report.Deadline} Ответственный: {report.Executor.Name}");
+            }
+        }
+
     }
 }
