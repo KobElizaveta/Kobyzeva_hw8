@@ -1,5 +1,6 @@
 ﻿using Kobyzeva_hw8_Tumakov.Class;
 using Kobyzeva_hw8_Tumakov.Enum;
+using System.Net.NetworkInformation;
 
 namespace Kobyzeva_hw8_Tumakov
 {
@@ -75,6 +76,10 @@ namespace Kobyzeva_hw8_Tumakov
             }
         }
 
+        static void Task93()
+        {
+
+        }
         static void Task91_hw()
         {
             Console.WriteLine("Создание пустого экземпляра песни: ");
@@ -101,8 +106,6 @@ namespace Kobyzeva_hw8_Tumakov
         static void Main(string[] args)
         {
             Task92();
-            Task93();
-
             Task91_hw();
         }
     }
